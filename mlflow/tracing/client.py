@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 from concurrent.futures import ThreadPoolExecutor
 from contextlib import nullcontext
 from typing import Optional, Union
@@ -34,7 +35,10 @@ from mlflow.tracing.utils.artifact_utils import get_artifact_uri_for_trace
 from mlflow.tracking._tracking_service.utils import _get_store, _resolve_tracking_uri
 from mlflow.utils import is_uuid
 from mlflow.utils.mlflow_tags import IMMUTABLE_TAGS
-from mlflow.utils.uri import add_databricks_profile_info_to_artifact_uri, is_databricks_uri
+from mlflow.utils.uri import (
+    add_databricks_profile_info_to_artifact_uri,
+    is_databricks_uri,
+)
 
 _logger = logging.getLogger(__name__)
 
@@ -538,7 +542,10 @@ class TracingClient:
         Returns:
             TraceData object representing the downloaded trace data.
         """
+        start_time_ms = int(time.time() * 1000)
         artifact_repo = self._get_artifact_repo_for_trace(trace_info)
+        end_time_ms = int(time.time() * 1000)
+        print(f"GET_ARTIFACT_REPO: {end_time_ms - start_time_ms}")
         return TraceData.from_dict(artifact_repo.download_trace_data())
 
     def _upload_trace_data(self, trace_info: TraceInfoV2, trace_data: TraceData) -> None:
