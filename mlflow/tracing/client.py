@@ -545,7 +545,7 @@ class TracingClient:
         start_time_ms = int(time.time() * 1000)
         artifact_repo = self._get_artifact_repo_for_trace(trace_info)
         end_time_ms = int(time.time() * 1000)
-        print(f"GET_ARTIFACT_REPO: {end_time_ms - start_time_ms}")
+        _logger.warning(f"GET_ARTIFACT_REPO: {end_time_ms - start_time_ms}")
         return TraceData.from_dict(artifact_repo.download_trace_data())
 
     def _upload_trace_data(self, trace_info: TraceInfoV2, trace_data: TraceData) -> None:

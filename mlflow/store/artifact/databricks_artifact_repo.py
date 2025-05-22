@@ -228,13 +228,13 @@ class DatabricksArtifactRepository(CloudArtifactRepository):
         start_time_ms = int(time.time() * 1000)
         [cred], _ = self.resource.get_credentials(cred_type=_CredentialType.READ)
         end_time_ms = int(time.time() * 1000)
-        print(f"GET_CREDENTIALS_TIME: {end_time_ms - start_time_ms}")
+        _logger.warning(f"GET_CREDENTIALS_TIME: {end_time_ms - start_time_ms}")
         signed_uri = cred.signed_uri
         headers = self._extract_headers_from_credentials(cred.headers)
         start_time_ms = int(time.time() * 1000)
         with cloud_storage_http_request("get", signed_uri, headers=headers) as resp:
             end_time_ms = int(time.time() * 1000)
-            print(f"DOWNLOAD_DATA_TIME: {end_time_ms - start_time_ms}")
+            _logger.warning(f"DOWNLOAD_DATA_TIME: {end_time_ms - start_time_ms}")
             try:
                 augmented_raise_for_status(resp)
             except requests.HTTPError as e:
@@ -246,7 +246,7 @@ class DatabricksArtifactRepository(CloudArtifactRepository):
                 start_time_ms = int(time.time() * 1000)
                 json_res = json.loads(resp.content)
                 end_time_ms = int(time.time() * 1000)
-                print(f"PARSE_JSON_TIME: {end_time_ms - start_time_ms}")
+                _logger.warning(f"PARSE_JSON_TIME: {end_time_ms - start_time_ms}")
                 return json_res
             except json.JSONDecodeError as e:
                 raise MlflowTraceDataCorrupted(request_id=self.resource.id) from e
